@@ -236,8 +236,8 @@ func TestMinimizeCorner(t *testing.T) {
 
 func TestMinimizeCorners(t *testing.T) {
 	board := makeBoardFromString("O       X")
-	expected := makeBoardFromString("X       O")
+	expected := makeBoardFromString("  O   X  ")
 	minimized, transform := board.Minimize()
 	assert.Equal(t, expected.String(), minimized.String())
-	assert.Equal(t, ttt.ROT_180, transform)
+	assert.Equal(t, ttt.ROT_RIGHT, transform)
 }

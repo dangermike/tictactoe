@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/dangermike/tictactoe/engine"
-	"github.com/dangermike/tictactoe/mover"
-	"github.com/dangermike/tictactoe/mover/dumb"
-	"github.com/dangermike/tictactoe/mover/learning"
-	"github.com/dangermike/tictactoe/mover/learningminimizing"
+	"github.com/dangermike/tictactoe/player"
+	"github.com/dangermike/tictactoe/player/dumb"
+	"github.com/dangermike/tictactoe/player/learning"
+	"github.com/dangermike/tictactoe/player/learningminimizing"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 	// }
 }
 
-func fight(p1 mover.Mover, p2 mover.Mover) (p1WinRate, p2WinRate, tieRate float64) {
+func fight(p1 player.Player, p2 player.Player) (p1WinRate, p2WinRate, tieRate float64) {
 	g := engine.NewGame()
 
 	results := [3]int{}
@@ -74,8 +74,8 @@ func fight(p1 mover.Mover, p2 mover.Mover) (p1WinRate, p2WinRate, tieRate float6
 	// fmt.Println(len(p1.NodeScoreSet))
 }
 
-func RunGame(g *engine.Game, player1 mover.Mover, player2 mover.Mover) engine.BoardState {
-	players := [2]mover.Mover{player1, player2}
+func RunGame(g *engine.Game, player1 player.Player, player2 player.Player) engine.BoardState {
+	players := [2]player.Player{player1, player2}
 	var board engine.Board
 	playerIx := 0
 	player1.Init(engine.MARK_X)

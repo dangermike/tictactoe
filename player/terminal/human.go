@@ -8,14 +8,14 @@ import (
 	"strings"
 
 	"github.com/dangermike/tictactoe/engine"
-	"github.com/dangermike/tictactoe/mover"
+	"github.com/dangermike/tictactoe/player"
 )
 
 type human struct {
 	mark engine.Mark
 }
 
-func New() mover.Mover {
+func New() player.Player {
 	return &human{}
 }
 

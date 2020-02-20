@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/dangermike/tictactoe/engine"
-	"github.com/dangermike/tictactoe/mover"
+	"github.com/dangermike/tictactoe/player"
 )
 
 type pos struct {
@@ -18,7 +18,7 @@ type robot struct {
 	moves []pos
 }
 
-func New() mover.Mover {
+func New() player.Player {
 	return &robot{
 		rnd:   rand.New(rand.NewSource(time.Now().UnixNano())),
 		moves: make([]pos, 0, 9),

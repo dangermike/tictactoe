@@ -15,20 +15,20 @@ The board has some special operations, specifically `Rotate` and `Minimize`. Rot
 ## Game
 Games contain a board and know the current player. While the board can tell whether a move is valid, it is up to the game to enforce the rules about turns. There isn't much in there, and likely won't be. Authentication and such will be handled elsewhere.
 
-## Mover
-The `Mover` interface is what defines a player in the game. Some movers carry no state, but most intelligent movers will have more to them than that. There are implementations in this project for both automated movers and a terminal-based mover. The plan is to build an API-exposing `Mover` that will be used to communicate with outside agents.
+## Player
+The `Player` interface is what defines a player in the game. Some players carry no state, but most intelligent players will have more to them than that. There are implementations in this project for both automated players and a terminal-based player. The plan is to build an API-exposing `Player` that will be used to communicate with outside agents.
 
-* `terminal`: A mover to get instructions from a human player at the command line. This shows the current state of the board to the user and parses the moves they make.
-* `dumb`: This mover just looks for an empty square at random. Useful for testing that things are working, the dumb mover isn't much of an opponent.
-* `learning`: Internally, this holds a map of boards it has seen to how well it has done in choosing a move on that board state. This mover takes a long time to train, but can get to be pretty good. When trained, it has learned about all 4,480 possible board states.
-* `learningminimizing`: Like the `learning` mover, this keeps a map of boards to choice values, but it minimizes (rotates) the board before evaluating. That means that this mover can learn much faster and carry far fewer states than the normal `learning` mover. This mover only has 956 states to track, about 1/5 as many as its non-minimizing counterpart.
-* `heuristic`: (INCOMPLETE) Tic-tac-toe is a solved game. The rules are known and well-defined. This mover knows those rules and simply applies them. Unless I make a mistake, it should never lose regardless of marker (X or O), and should be able to beat human players that haven't figured out all the rules yet.
+* `terminal`: A player to get instructions from a human player at the command line. This shows the current state of the board to the user and parses the moves they make.
+* `dumb`: This player just looks for an empty square at random. Useful for testing that things are working, the dumb player isn't much of an opponent.
+* `learning`: Internally, this holds a map of boards it has seen to how well it has done in choosing a move on that board state. This player takes a long time to train, but can get to be pretty good. When trained, it has learned about all 4,480 possible board states.
+* `learningminimizing`: Like the `learning` player, this keeps a map of boards to choice values, but it minimizes (rotates) the board before evaluating. That means that this player can learn much faster and carry far fewer states than the normal `learning` player. This player only has 956 states to track, about 1/5 as many as its non-minimizing counterpart.
+* `heuristic`: (INCOMPLETE) Tic-tac-toe is a solved game. The rules are known and well-defined. This player knows those rules and simply applies them. Unless I make a mistake, it should never lose regardless of marker (X or O), and should be able to beat human players that haven't figured out all the rules yet.
 
-If everything goes according to plan, the `learning` and `learningminimizing` movers should achieve parity with the `heuristic` mover. 
+If everything goes according to plan, the `learning` and `learningminimizing` players should achieve parity with the `heuristic` player.
 
 # Main? Hardly.
 
-At the time of this writing, `main` is a dumping ground of hacky, messy stuff to train and test the automated movers. The plans for this are pretty grandiose.
+At the time of this writing, `main` is a dumping ground of hacky, messy stuff to train and test the automated players. The plans for this are pretty grandiose.
 
 ## Functional areas
 

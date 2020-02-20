@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/dangermike/tictactoe/engine"
-	"github.com/dangermike/tictactoe/mover/dumb"
+	"github.com/dangermike/tictactoe/player/dumb"
 )
 
 func BenchmarkDumbGame(b *testing.B) {
