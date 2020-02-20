@@ -4,18 +4,20 @@ In giving interviews for architecture or coding, I have recently been asking can
 
 After hearing many candidates address this silly little game, it seemed only fair for me to do the same. Unlike those sitting across the table from me, I am under no time constraints. I have the opportunity to build tic-tac-toe unfettered by reason, unbound to purpose, and completely ridiculous. Since this is all for fun, ridiculousness in the implementation should be seen as a virtue.
 
-# Game Implementation
+## Game Implementation
 
-## Board
+### Board
 
 With the unreasonable goal of supporting millions of games, memory efficiency is paramount. To that end, the board is represented as a single `uint32` and is immutable. This allows the board to be cheap to pass around and/or serialize. Not using a slice keeps all data on the stack. The board "number" uses 2 bits per square, 18 bits of total information. It is unclear if I'm going to use the other 14 bits, but we'll see. Each square can hold only 3 states, but using 2 bits allows the board to be manipulated with bit shifts, rather than `div` and `mod` by 3. These bit shifts should be significantly faster than the integer math.
 
 The board has some special operations, specifically `Rotate` and `Minimize`. Rotations are transformations of the board. Minimization is rotating (or flipping) the board to minimize the integer representation. This allows all equivalent board positions to be transformed into a single, common value. Being honest, this should probably not be on the board as the board doesn't need this ability to run the game. Rather, it is useful to reduce the cases checked by automated players. I will likely factor these out into some kind of tic-tac-toe utility package.
 
-## Game
+### Game
+
 Games contain a board and know the current player. While the board can tell whether a move is valid, it is up to the game to enforce the rules about turns. There isn't much in there, and likely won't be. Authentication and such will be handled elsewhere.
 
-## Player
+### Player
+
 The `Player` interface is what defines a player in the game. Some players carry no state, but most intelligent players will have more to them than that. There are implementations in this project for both automated players and a terminal-based player. The plan is to build an API-exposing `Player` that will be used to communicate with outside agents.
 
 * `terminal`: A player to get instructions from a human player at the command line. This shows the current state of the board to the user and parses the moves they make.
@@ -26,17 +28,17 @@ The `Player` interface is what defines a player in the game. Some players carry 
 
 If everything goes according to plan, the `learning` and `learningminimizing` players should achieve parity with the `heuristic` player.
 
-# Main? Hardly.
+## Main? Hardly
 
 At the time of this writing, `main` is a dumping ground of hacky, messy stuff to train and test the automated players. The plans for this are pretty grandiose.
 
-## Functional areas
+### Functional areas
 
 * Lobby -- where players can go to get matched for a game
 * Gameplay -- transferred from the lobby, games happen here
 * Scoreboard -- who's good, who plays
 
-## Features:
+### Features
 
 * Millions of simultaneous games
 * Multi-host
