@@ -36,6 +36,21 @@ const (
 
 type Board uint32
 
+func FromString(b string) Board {
+	var board Board
+	for ix, s := range b {
+		if s == 'x' || s == 'X' {
+			board |= Board(MARK_X << (ix << 1))
+			continue
+		}
+		if s == 'o' || s == 'O' {
+			board |= Board(MARK_O << (ix << 1))
+			continue
+		}
+	}
+	return board
+}
+
 func getIx(x, y uint32) (uint32, error) {
 	if x > 2 || y > 2 {
 		return 0, ErrInvalidCoordinate

@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"sort"
+	"time"
 
 	"github.com/dangermike/tictactoe/engine"
 	"github.com/dangermike/tictactoe/player"
 	"github.com/dangermike/tictactoe/player/dumb"
+	"github.com/dangermike/tictactoe/player/heuristic"
 	"github.com/dangermike/tictactoe/player/learning"
 	"github.com/dangermike/tictactoe/player/learningminimizing"
 )
@@ -14,27 +17,38 @@ func main() {
 	p1 := learningminimizing.New()
 	p2 := learning.New()
 	mrDumb := dumb.New()
-	for i := 0; i < 50; i++ {
-		// RunGame(engine.NewGame(), p1, terminal.New())
-		// RunGame(engine.NewGame(), terminal.New(), p1)
-		// fmt.Printf("lv[]: xx/xx/xx | %d known boards\n", len(p1.NodeScoreSet))
-		p1WinRate, p2WinRate, tieRate := fight(p1, p2)
-		fmt.Printf("mvl: %.2f/%.2f/%.2f | %d/%d known boards\n", p1WinRate, p2WinRate, tieRate, len(p1.NodeScoreSet), len(p2.NodeScoreSet))
-		p1WinRate, p2WinRate, tieRate = fight(p1, mrDumb)
-		fmt.Printf("mvd: %.2f/%.2f/%.2f | %d known boards\n", p1WinRate, p2WinRate, tieRate, len(p1.NodeScoreSet))
-		p1WinRate, p2WinRate, tieRate = fight(p2, mrDumb)
-		fmt.Printf("lvd: %.2f/%.2f/%.2f | %d known boards\n", p1WinRate, p2WinRate, tieRate, len(p2.NodeScoreSet))
+
+	matches := map[string][2]player.Player{
+		"mvl": [2]player.Player{p1, p2},
+		"mvd": [2]player.Player{p1, mrDumb},
+		"lvd": [2]player.Player{p2, mrDumb},
+		"dvd": [2]player.Player{mrDumb, mrDumb},
+	}
+
+	for i := 0; i < 1; i++ {
+		for name, players := range matches {
+			start := time.Now()
+			p1WinRate, p2WinRate, tieRate := fight(players[0], players[1])
+			duration := time.Since(start)
+			fmt.Printf("%s: %.2f/%.2f/%.2f (%dms)\n", name, p1WinRate, p2WinRate, tieRate, duration.Milliseconds())
+		}
 		fmt.Println("----------")
 	}
-	// for board, scores := range p1.NodeScoreSet {
-	// 	high := 0
-	// 	for i := 1; i < 9; i++ {
-	// 		if scores[i] > scores[high] {
-	// 			high = i
-	// 		}
-	// 	}
-	// 	fmt.Printf("%s: %d\n", board, high)
-	// }
+
+	boards := make([]engine.Board, 0, len(p1.NodeScoreSet))
+	for board := range p1.NodeScoreSet {
+		boards = append(boards, board)
+	}
+	hplayer := heuristic.New()
+	sort.Slice(boards, func(i, j int) bool { return boards[i] < boards[j] })
+	for _, board := range boards {
+		x, _ := hplayer.GetMove(board)
+		if x > 2 {
+			fmt.Print("[")
+			fmt.Print(board)
+			fmt.Println("]")
+		}
+	}
 }
 
 func fight(p1 player.Player, p2 player.Player) (p1WinRate, p2WinRate, tieRate float64) {
@@ -42,7 +56,7 @@ func fight(p1 player.Player, p2 player.Player) (p1WinRate, p2WinRate, tieRate fl
 
 	results := [3]int{}
 	cnt := 0.0
-	for x := 0; x < 1000000; x++ {
+	for x := 0; x < 100000; x++ {
 		cnt++
 		g.Reset()
 		var result engine.BoardState

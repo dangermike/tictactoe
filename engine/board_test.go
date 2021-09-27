@@ -7,21 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func makeBoardFromString(b string) ttt.Board {
-	var board ttt.Board
-	for ix, s := range b {
-		if s == 'x' || s == 'X' {
-			board |= ttt.Board(ttt.MARK_X << (ix << 1))
-			continue
-		}
-		if s == 'o' || s == 'O' {
-			board |= ttt.Board(ttt.MARK_O << (ix << 1))
-			continue
-		}
-	}
-	return board
-}
-
 func TestBoardApply(t *testing.T) {
 	var board ttt.Board
 	board, err := board.Apply(1, 0, ttt.MARK_O)
@@ -53,37 +38,37 @@ func TestBoardState(t *testing.T) {
 	// X O X
 	// X O X
 	// O X O
-	assert.Equal(t, ttt.BOARDSTATE_TIE, makeBoardFromString("XOXXOXOXO").State())
+	assert.Equal(t, ttt.BOARDSTATE_TIE, ttt.FromString("XOXXOXOXO").State())
 
 	// X O X
 	// X O X
 	// O X
-	assert.Equal(t, ttt.BOARDSTATE_OPEN, makeBoardFromString("XOXXOXOX ").State())
+	assert.Equal(t, ttt.BOARDSTATE_OPEN, ttt.FromString("XOXXOXOX ").State())
 
 	// X O X
 	// X O X
 	// O X X
-	assert.Equal(t, ttt.BOARDSTATE_X_WIN, makeBoardFromString("XOXXOXOXX").State())
+	assert.Equal(t, ttt.BOARDSTATE_X_WIN, ttt.FromString("XOXXOXOXX").State())
 
 	// X O X
 	// X O X
 	// O O
-	assert.Equal(t, ttt.BOARDSTATE_O_WIN, makeBoardFromString("XOXXOXOO ").State())
+	assert.Equal(t, ttt.BOARDSTATE_O_WIN, ttt.FromString("XOXXOXOO ").State())
 
 	// O O X
 	// X O X
 	// O X O
-	assert.Equal(t, ttt.BOARDSTATE_O_WIN, makeBoardFromString("OOXXOXOXO").State())
+	assert.Equal(t, ttt.BOARDSTATE_O_WIN, ttt.FromString("OOXXOXOXO").State())
 
 	// X O X
 	// O X X
 	// X X O
-	assert.Equal(t, ttt.BOARDSTATE_X_WIN, makeBoardFromString("XOXOXXXXO").State())
+	assert.Equal(t, ttt.BOARDSTATE_X_WIN, ttt.FromString("XOXOXXXXO").State())
 
 	// X O
 	// O X X
 	// O X O
-	assert.Equal(t, ttt.BOARDSTATE_TIE, makeBoardFromString("XO OXXOXO").State())
+	assert.Equal(t, ttt.BOARDSTATE_TIE, ttt.FromString("XO OXXOXO").State())
 }
 
 func TestBoardStateString(t *testing.T) {
@@ -95,12 +80,12 @@ func TestBoardStateString(t *testing.T) {
 }
 
 func TestBoardString(t *testing.T) {
-	assert.Equal(t, "XOX/OXO/XOX", makeBoardFromString("XOXOXOXOX").String())
-	assert.Equal(t, "   /   /   ", makeBoardFromString("").String())
+	assert.Equal(t, "XOX/OXO/XOX", ttt.FromString("XOXOXOXOX").String())
+	assert.Equal(t, "   /   /   ", ttt.FromString("").String())
 }
 
 func BenchmarkBoardState(b *testing.B) {
-	board := makeBoardFromString("XOXXOXOXO")
+	board := ttt.FromString("XOXXOXOXO")
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if ttt.BOARDSTATE_TIE != board.State() {
@@ -129,17 +114,17 @@ func TestAll(t *testing.T) {
 }
 
 func TestGetByIndex(t *testing.T) {
-	mark, err := makeBoardFromString("XO O X XO").GetByIndex(3)
+	mark, err := ttt.FromString("XO O X XO").GetByIndex(3)
 	assert.Equal(t, ttt.MARK_O, mark)
 	assert.NoError(t, err)
 
-	mark, err = makeBoardFromString("XO O X XO").GetByIndex(22)
+	mark, err = ttt.FromString("XO O X XO").GetByIndex(22)
 	assert.Equal(t, ttt.MARK_BAD, mark)
 	assert.Equal(t, ttt.ErrInvalidCoordinate, err)
 }
 
 func TestRotate(t *testing.T) {
-	board := makeBoardFromString("XO O X XO")
+	board := ttt.FromString("XO O X XO")
 	assert.Equal(t, board, board.Rotate(ttt.ROT_IDENTITY))
 	assert.NotEqual(t, board, board.Rotate(ttt.ROT_RIGHT))
 
@@ -227,16 +212,16 @@ func TestRotateAddition(t *testing.T) {
 }
 
 func TestMinimizeCorner(t *testing.T) {
-	board := makeBoardFromString("        X")
-	expected := makeBoardFromString("X        ")
+	board := ttt.FromString("        X")
+	expected := ttt.FromString("X        ")
 	minimized, transform := board.Minimize()
 	assert.Equal(t, expected, minimized)
 	assert.Equal(t, ttt.ROT_180, transform)
 }
 
 func TestMinimizeCorners(t *testing.T) {
-	board := makeBoardFromString("O       X")
-	expected := makeBoardFromString("  O   X  ")
+	board := ttt.FromString("O       X")
+	expected := ttt.FromString("  O   X  ")
 	minimized, transform := board.Minimize()
 	assert.Equal(t, expected.String(), minimized.String())
 	assert.Equal(t, ttt.ROT_RIGHT, transform)
